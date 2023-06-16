@@ -1,8 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { setAdmin } from '../redux/admin/adminSlice';
+import { useDispatch } from 'react-redux';
 
 const Register = () => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
   const [name, setName] = useState('');
@@ -25,7 +28,15 @@ const Register = () => {
       JSON.stringify(data)
     );
 
-    console.log(res.data);
+    if (res.status === 200) {
+      let json = res.data.data;
+
+      json = { ...json, token: res.data.token };
+
+      localStorage.setItem('childvaccination', JSON.stringify(json));
+
+      dispatch(setAdmin(json));
+    }
   };
 
   return (
@@ -65,7 +76,7 @@ const Register = () => {
               Phone Number
             </span>
             <input
-              type="number"
+              type="text"
               placeholder="Phone Number"
               className="border border-slate-300 rounded-md outline-none text-sm shadow-sm px-3 py-2 placeholder-slate-400 w-full"
               value={phone}
